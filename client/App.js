@@ -42,13 +42,14 @@ export default class App extends Component {
               path="/"
               render={() => (
                 <div>
+                  <br />
                   <h6>User Pagging Applicaiton</h6>
+                  <hr />
                 </div>
               )}
             />
-            <Route exact path="/users/:index?" component={Users} />} />
+            <Route exact path="/users/:index?" component={Users} />
             <Route path="/users/search/:searchTerm/:index?" component={Users} />
-            } />
           </Switch>
         </Router>
       </div>

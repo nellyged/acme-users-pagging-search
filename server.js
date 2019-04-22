@@ -25,7 +25,7 @@ const User = conn.define('user', {
 const syncAndSeed = () => {
   return conn.sync({ force: true }).then(() => {
     let count = 0;
-    while (count < 8047) {
+    while (count < 8278) {
       User.create({
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),

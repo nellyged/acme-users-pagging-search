@@ -21,7 +21,7 @@ export default class Users extends Component {
           ? props.match.params.searchTerm
           : '',
         go: true,
-        clear: props.match.params.searchTerm ? false : true,
+        clear: !props.match.params.searchTerm,
       };
     }
   }
@@ -37,7 +37,7 @@ export default class Users extends Component {
       this.setState({
         searchTerm: match.params.searchTerm ? match.params.searchTerm : '',
         go: true,
-        clear: match.params.searchTerm ? false : true,
+        clear: !match.params.searchTerm,
       });
       this.load();
     }
@@ -46,7 +46,7 @@ export default class Users extends Component {
     const { match } = this.props;
     axios
       .get(
-        `/api/users/${
+        `https://acme-users-api.herokuapp.com/api/users/${
           match.params.searchTerm
             ? `search/${match.params.searchTerm}/${match.params.index || ''}`
             : match.params.index || ''
@@ -93,6 +93,24 @@ export default class Users extends Component {
     const pages = Math.floor(count / 50);
     const first = !(match.params.index * 1);
     const last = current === pages;
+    const hiLite = (str, term = '') => {
+      return str.toLowerCase().includes(term.toLowerCase()) ? (
+        <div>
+          {str.slice(0, str.toLowerCase().indexOf(term.toLowerCase()))}
+          <span style={{ backgroundColor: 'gold' }}>
+            {str.slice(
+              str.toLowerCase().indexOf(term.toLowerCase()),
+              str.toLowerCase().indexOf(term.toLowerCase()) + term.length
+            )}
+          </span>
+          {str.slice(
+            str.toLowerCase().indexOf(term.toLowerCase()) + term.length
+          )}
+        </div>
+      ) : (
+        str
+      );
+    };
     return (
       <div>
         {`${count} Results. Page ${current + 1}  of ${pages + 1}`}
@@ -174,15 +192,25 @@ export default class Users extends Component {
             </tr>
           </thead>
           <tbody>
-            {users.map(user => (
-              <tr key={user.id}>
-                <td>{user.firstName}</td>
-                <td>{user.lastName}</td>
-                <td>{user.middleName}</td>
-                <td>{user.email}</td>
-                <td>{user.title}</td>
-              </tr>
-            ))}
+            {clear
+              ? users.map(user => (
+                  <tr key={user.id}>
+                    <td>{user.firstName}</td>
+                    <td>{user.lastName}</td>
+                    <td>{user.middleName}</td>
+                    <td>{user.email}</td>
+                    <td>{user.title}</td>
+                  </tr>
+                ))
+              : users.map(user => (
+                  <tr key={user.id}>
+                    <td>{hiLite(user.firstName, match.params.searchTerm)}</td>
+                    <td>{hiLite(user.lastName, match.params.searchTerm)}</td>
+                    <td>{hiLite(user.middleName, match.params.searchTerm)}</td>
+                    <td>{hiLite(user.email, match.params.searchTerm)}</td>
+                    <td>{hiLite(user.title, match.params.searchTerm)}</td>
+                  </tr>
+                ))}
           </tbody>
         </table>
       </div>
